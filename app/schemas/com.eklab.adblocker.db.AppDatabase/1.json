@@ -1,0 +1,223 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "bb31b76ec9c70c673e986e094155bc5f",
+    "entities": [
+      {
+        "tableName": "connection_log",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `timestamp` INTEGER NOT NULL, `appPackage` TEXT, `appName` TEXT, `uid` INTEGER NOT NULL, `protocol` TEXT NOT NULL, `destIp` TEXT NOT NULL, `destPort` INTEGER NOT NULL, `sni` TEXT, `dnsHostname` TEXT, `resolvedHostname` TEXT, `bytesSent` INTEGER NOT NULL, `bytesReceived` INTEGER NOT NULL, `blocked` INTEGER NOT NULL, `matchedRuleId` INTEGER, `durationMs` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "timestamp",
+            "columnName": "timestamp",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "appPackage",
+            "columnName": "appPackage",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "appName",
+            "columnName": "appName",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "uid",
+            "columnName": "uid",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "protocol",
+            "columnName": "protocol",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "destIp",
+            "columnName": "destIp",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "destPort",
+            "columnName": "destPort",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sni",
+            "columnName": "sni",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "dnsHostname",
+            "columnName": "dnsHostname",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "resolvedHostname",
+            "columnName": "resolvedHostname",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "bytesSent",
+            "columnName": "bytesSent",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "bytesReceived",
+            "columnName": "bytesReceived",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "blocked",
+            "columnName": "blocked",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "matchedRuleId",
+            "columnName": "matchedRuleId",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "durationMs",
+            "columnName": "durationMs",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_connection_log_timestamp",
+            "unique": false,
+            "columnNames": [
+              "timestamp"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_connection_log_timestamp` ON `${TABLE_NAME}` (`timestamp`)"
+          },
+          {
+            "name": "index_connection_log_appPackage",
+            "unique": false,
+            "columnNames": [
+              "appPackage"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_connection_log_appPackage` ON `${TABLE_NAME}` (`appPackage`)"
+          },
+          {
+            "name": "index_connection_log_blocked",
+            "unique": false,
+            "columnNames": [
+              "blocked"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_connection_log_blocked` ON `${TABLE_NAME}` (`blocked`)"
+          },
+          {
+            "name": "index_connection_log_resolvedHostname",
+            "unique": false,
+            "columnNames": [
+              "resolvedHostname"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_connection_log_resolvedHostname` ON `${TABLE_NAME}` (`resolvedHostname`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "rules",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `enabled` INTEGER NOT NULL, `priority` INTEGER NOT NULL, `selectorType` TEXT NOT NULL, `selectorValue` TEXT NOT NULL, `action` TEXT NOT NULL, `createdAt` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "enabled",
+            "columnName": "enabled",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "priority",
+            "columnName": "priority",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "selectorType",
+            "columnName": "selectorType",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "selectorValue",
+            "columnName": "selectorValue",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "action",
+            "columnName": "action",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "createdAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'bb31b76ec9c70c673e986e094155bc5f')"
+    ]
+  }
+}

@@ -1,0 +1,65 @@
+[versions]
+agp = "8.7.3"
+kotlin = "2.0.21"
+ksp = "2.0.21-1.0.28"
+coreKtx = "1.15.0"
+activityCompose = "1.9.3"
+composeBom = "2024.12.01"
+lifecycle = "2.8.7"
+navigationCompose = "2.8.5"
+hilt = "2.51.1"
+hiltNavigationCompose = "1.2.0"
+room = "2.6.1"
+work = "2.10.0"
+paging = "3.3.5"
+coroutines = "1.9.0"
+junit = "4.13.2"
+truth = "1.4.4"
+mockk = "1.13.13"
+turbine = "1.2.0"
+robolectric = "4.14.1"
+androidxTestCore = "1.6.1"
+androidxTestJunit = "1.2.1"
+espresso = "3.6.1"
+
+[libraries]
+androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
+androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
+androidx-compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBom" }
+androidx-compose-ui = { module = "androidx.compose.ui:ui" }
+androidx-compose-ui-graphics = { module = "androidx.compose.ui:ui-graphics" }
+androidx-compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
+androidx-compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
+androidx-compose-material3 = { module = "androidx.compose.material3:material3" }
+androidx-compose-material-icons = { module = "androidx.compose.material:material-icons-extended" }
+androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycle" }
+androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle" }
+androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
+hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
+hilt-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
+hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
+room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
+room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
+room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
+room-paging = { module = "androidx.room:room-paging", version.ref = "room" }
+room-testing = { module = "androidx.room:room-testing", version.ref = "room" }
+work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "work" }
+paging-runtime = { module = "androidx.paging:paging-runtime", version.ref = "paging" }
+paging-compose = { module = "androidx.paging:paging-compose", version.ref = "paging" }
+coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
+coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
+junit = { module = "junit:junit", version.ref = "junit" }
+truth = { module = "com.google.truth:truth", version.ref = "truth" }
+mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
+turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
+robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
+androidx-test-core = { module = "androidx.test:core", version.ref = "androidxTestCore" }
+androidx-test-junit = { module = "androidx.test.ext:junit", version.ref = "androidxTestJunit" }
+espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "espresso" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
