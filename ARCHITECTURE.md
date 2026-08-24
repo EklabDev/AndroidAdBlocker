@@ -70,7 +70,11 @@ inspectable TCP/TLS.
 immutable snapshot — **enabled rules only, sorted by priority ascending** — into a
 `@Volatile` field; `evaluate()` is lock-free and safe to call from the packet thread.
 `RulesRepository` collects the Room rules `Flow` and hot-reloads the engine on every
-change, so rule edits apply without a VPN restart.
+change, so rule edits apply without a VPN restart. The repository is eagerly
+injected from `App` (so the collector starts even when the UI never opens a
+rules-related screen), and `TrafficVpnService` also calls
+`RulesRepository.refreshEngine()` synchronously before starting the packet
+pipeline so the first packets never evaluate against an empty snapshot.
 
 Semantics:
 

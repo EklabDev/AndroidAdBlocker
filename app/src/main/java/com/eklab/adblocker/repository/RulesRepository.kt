@@ -36,6 +36,16 @@ class RulesRepository @Inject constructor(
             .launchIn(appScope)
     }
 
+    /**
+     * Synchronously seed [ruleEngine] from Room. The Flow collector above is
+     * async, so the VPN service must call this before starting the packet
+     * pipeline — otherwise the first packets (or, if this repository was never
+     * created, *all* packets) evaluate against an empty snapshot and fail open.
+     */
+    suspend fun refreshEngine() {
+        ruleEngine.updateRules(ruleDao.getAll())
+    }
+
     suspend fun add(rule: Rule): Long = ruleDao.insert(rule)
 
     suspend fun update(rule: Rule) = ruleDao.update(rule)
