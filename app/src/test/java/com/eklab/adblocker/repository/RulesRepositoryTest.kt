@@ -92,6 +92,16 @@ class RulesRepositoryTest {
     }
 
     @Test
+    fun `refreshEngine seeds the engine from a dao snapshot`() = runTest {
+        coEvery { ruleDao.getAll() } returns listOf(rule1, rule2)
+
+        repository.refreshEngine()
+
+        verify { ruleEngine.updateRules(listOf(rule1, rule2)) }
+        coVerify { ruleDao.getAll() }
+    }
+
+    @Test
     fun `mutations delegate to the dao`() = runTest {
         repository.add(rule1)
         repository.update(rule2)

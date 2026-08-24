@@ -15,6 +15,7 @@ import com.eklab.adblocker.core.RuleEngine
 import com.eklab.adblocker.db.RetentionPolicy
 import com.eklab.adblocker.repository.AppsRepository
 import com.eklab.adblocker.repository.ConnectionsRepository
+import com.eklab.adblocker.repository.RulesRepository
 import com.eklab.adblocker.settings.SettingsRepository
 import com.eklab.adblocker.vpn.tun.VpnPipeline
 import dagger.hilt.android.AndroidEntryPoint
@@ -23,6 +24,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.io.IOException
 import javax.inject.Inject
 
@@ -44,6 +46,7 @@ import javax.inject.Inject
 class TrafficVpnService : VpnService() {
 
     @Inject lateinit var ruleEngine: RuleEngine
+    @Inject lateinit var rulesRepository: RulesRepository
     @Inject lateinit var settingsRepository: SettingsRepository
     @Inject lateinit var connectionsRepository: ConnectionsRepository
     @Inject lateinit var retentionPolicy: RetentionPolicy
@@ -103,6 +106,15 @@ class TrafficVpnService : VpnService() {
         running = true
         VpnControl.setRunning(true)
         VpnState.setWasRunning(this, true)
+
+        // Seed rules before any packet is evaluated. The repository's Flow
+        // collector is async — without this sync load the engine can still be
+        // empty when the first flows arrive (fail-open = rules "not applying").
+        try {
+            runBlocking { rulesRepository.refreshEngine() }
+        } catch (t: Throwable) {
+            // Fail open with whatever snapshot we have; hot-reload may catch up.
+        }
 
         pipeline = VpnPipeline(
             context = this,
