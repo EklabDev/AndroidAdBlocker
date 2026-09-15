@@ -18,6 +18,7 @@ import com.eklab.adblocker.repository.ConnectionsRepository
 import com.eklab.adblocker.repository.RulesRepository
 import com.eklab.adblocker.settings.SettingsRepository
 import com.eklab.adblocker.vpn.tun.VpnPipeline
+import com.eklab.adblocker.widget.AdBlockerWidgetProvider
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -106,6 +107,7 @@ class TrafficVpnService : VpnService() {
         running = true
         VpnControl.setRunning(true)
         VpnState.setWasRunning(this, true)
+        AdBlockerWidgetProvider.updateAll(this)
 
         // Seed rules before any packet is evaluated. The repository's Flow
         // collector is async — without this sync load the engine can still be
@@ -194,6 +196,7 @@ class TrafficVpnService : VpnService() {
 
         VpnControl.setRunning(false)
         VpnState.setWasRunning(this, false)
+        AdBlockerWidgetProvider.updateAll(this)
         stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
     }

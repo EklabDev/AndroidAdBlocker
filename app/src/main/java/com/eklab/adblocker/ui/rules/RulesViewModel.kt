@@ -2,6 +2,7 @@ package com.eklab.adblocker.ui.rules
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.eklab.adblocker.core.RuleAction
 import com.eklab.adblocker.core.SelectorType
 import com.eklab.adblocker.db.RetentionPolicy
 import com.eklab.adblocker.db.entities.Rule
@@ -46,6 +47,23 @@ class RulesViewModel @Inject constructor(
 
     fun addRule(rule: Rule) {
         viewModelScope.launch { rulesRepository.add(rule) }
+    }
+
+    fun addKnownAdDomains(values: List<String>) {
+        if (values.isEmpty()) return
+        viewModelScope.launch {
+            val rules = values.map { domain ->
+                Rule(
+                    name = domain,
+                    enabled = true,
+                    priority = 100,
+                    selectorType = SelectorType.HOST_SUFFIX,
+                    selectorValue = domain,
+                    action = RuleAction.BLOCK,
+                )
+            }
+            rulesRepository.addAllSkippingDuplicates(rules)
+        }
     }
 
     fun setEnabled(id: Long, enabled: Boolean) {

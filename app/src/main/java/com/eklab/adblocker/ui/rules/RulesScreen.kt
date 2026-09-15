@@ -77,18 +77,27 @@ fun RulesScreen(viewModel: RulesViewModel = hiltViewModel()) {
                 style = MaterialTheme.typography.headlineSmall,
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp),
             )
-            if (localRules.isEmpty()) {
-                Text(
-                    "No rules yet. Tap + to block or allow traffic.",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                )
-            }
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 88.dp),
             ) {
+                item {
+                    KnownAdsSection(
+                        rules = localRules,
+                        onAdd = { viewModel.addKnownAdDomains(it) },
+                        modifier = Modifier.padding(bottom = 12.dp),
+                    )
+                }
+                if (localRules.isEmpty()) {
+                    item {
+                        Text(
+                            "No rules yet. Tap + to block or allow traffic, or add known ad domains above.",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.padding(bottom = 12.dp),
+                        )
+                    }
+                }
                 items(localRules, key = { it.id }) { rule ->
                     val isDragging = draggedItemId == rule.id
                     RuleCard(

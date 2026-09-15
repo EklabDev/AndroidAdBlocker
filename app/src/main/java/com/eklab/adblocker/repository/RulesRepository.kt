@@ -10,6 +10,7 @@ import com.eklab.adblocker.db.RuleDao
 import com.eklab.adblocker.db.entities.ConnectionLog
 import com.eklab.adblocker.db.entities.Rule
 import com.eklab.adblocker.di.AppScope
+import com.eklab.adblocker.rules.KnownAdDomains
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.launchIn
@@ -47,6 +48,28 @@ class RulesRepository @Inject constructor(
     }
 
     suspend fun add(rule: Rule): Long = ruleDao.insert(rule)
+
+    /**
+     * Inserts [rules], skipping HOST_SUFFIX values that already exist (leading-dot
+     * and case ignored). Returns how many rows were inserted.
+     */
+    suspend fun addAllSkippingDuplicates(rules: List<Rule>): Int {
+        val existingKeys = ruleDao.getAll()
+            .filter { it.selectorType == SelectorType.HOST_SUFFIX }
+            .mapTo(mutableSetOf()) { KnownAdDomains.normalize(it.selectorValue) }
+        val toInsert = ArrayList<Rule>(rules.size)
+        for (rule in rules) {
+            if (rule.selectorType == SelectorType.HOST_SUFFIX) {
+                val key = KnownAdDomains.normalize(rule.selectorValue)
+                if (key.isEmpty() || !existingKeys.add(key)) continue
+            }
+            toInsert += rule
+        }
+        if (toInsert.isNotEmpty()) {
+            ruleDao.insertAll(toInsert)
+        }
+        return toInsert.size
+    }
 
     suspend fun update(rule: Rule) = ruleDao.update(rule)
 

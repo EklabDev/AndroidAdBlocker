@@ -11,9 +11,11 @@ import com.eklab.adblocker.db.RuleDao
 import com.eklab.adblocker.db.entities.ConnectionLog
 import com.eklab.adblocker.db.entities.Rule
 import com.google.common.truth.Truth.assertThat
+import io.mockk.any
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
+import io.mockk.match
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.cancel
@@ -114,6 +116,56 @@ class RulesRepositoryTest {
         coVerify { ruleDao.delete(rule1) }
         coVerify { ruleDao.setEnabled(1L, false) }
         coVerify { ruleDao.reorder(listOf(2L, 1L)) }
+    }
+
+    @Test
+    fun `addAllSkippingDuplicates inserts new host suffixes only`() = runTest {
+        coEvery { ruleDao.getAll() } returns listOf(rule1)
+        val duplicateNoDot = rule1.copy(id = 0, selectorValue = "ads.com")
+        val duplicateCase = rule1.copy(id = 0, selectorValue = ".ADS.COM")
+        val fresh = rule1.copy(id = 0, name = ".vungle.com", selectorValue = ".vungle.com")
+        val emptySuffix = rule1.copy(id = 0, name = "empty", selectorValue = ".")
+
+        val inserted = repository.addAllSkippingDuplicates(
+            listOf(duplicateNoDot, duplicateCase, fresh, emptySuffix, rule2),
+        )
+
+        assertThat(inserted).isEqualTo(2)
+        coVerify {
+            ruleDao.insertAll(
+                match { rules ->
+                    rules.size == 2 &&
+                        rules[0].selectorValue == ".vungle.com" &&
+                        rules[1] == rule2
+                },
+            )
+        }
+    }
+
+    @Test
+    fun `addAllSkippingDuplicates skips insert when every suffix already exists`() = runTest {
+        coEvery { ruleDao.getAll() } returns listOf(rule1)
+
+        val inserted = repository.addAllSkippingDuplicates(
+            listOf(rule1.copy(id = 0, selectorValue = "ADS.com")),
+        )
+
+        assertThat(inserted).isEqualTo(0)
+        coVerify(exactly = 0) { ruleDao.insertAll(any()) }
+    }
+
+    @Test
+    fun `addAllSkippingDuplicates skips duplicate suffixes inside the same batch`() = runTest {
+        coEvery { ruleDao.getAll() } returns emptyList()
+        val first = rule1.copy(id = 0, selectorValue = ".vungle.com")
+        val second = rule1.copy(id = 0, selectorValue = "vungle.com")
+
+        val inserted = repository.addAllSkippingDuplicates(listOf(first, second))
+
+        assertThat(inserted).isEqualTo(1)
+        coVerify {
+            ruleDao.insertAll(match { it.size == 1 && it[0].selectorValue == ".vungle.com" })
+        }
     }
 
     @Test

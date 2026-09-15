@@ -103,10 +103,11 @@ fun RuleEditDialog(
     }
 
     fun onTypeChange(newType: SelectorType) {
+        val reshaped = reshapeSelectorValue(selectorType, newType, value)
         selectorType = newType
-        value = ""
+        value = reshaped
         suggestionsExpanded = false
-        if (!nameTouched) name = ""
+        if (!nameTouched) name = autoName(newType, reshaped)
     }
 
     // Suggestions as (value to insert) to (display text).

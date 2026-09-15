@@ -22,8 +22,28 @@ object VpnControl {
         _isRunning.value = running
     }
 
+    /**
+     * Live in-memory running flag, falling back to the persisted "was running"
+     * hint after process death (before the service republishes [setRunning]).
+     */
+    fun isProtectionOn(context: Context): Boolean =
+        _isRunning.value || VpnState.wasRunning(context)
+
     /** Returns the system consent intent, or null if consent was already granted. */
     fun prepareIntent(context: Context): Intent? = VpnService.prepare(context)
+
+    /**
+     * Starts the VPN if system consent is already granted; otherwise invokes
+     * [launchConsent] with the [VpnService.prepare] intent.
+     */
+    fun startOrRequestConsent(context: Context, launchConsent: (Intent) -> Unit) {
+        val consent = prepareIntent(context)
+        if (consent != null) {
+            launchConsent(consent)
+        } else {
+            start(context)
+        }
+    }
 
     fun start(context: Context) {
         val intent = Intent(context, TrafficVpnService::class.java)
