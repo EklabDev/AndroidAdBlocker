@@ -11,11 +11,9 @@ import com.eklab.adblocker.db.RuleDao
 import com.eklab.adblocker.db.entities.ConnectionLog
 import com.eklab.adblocker.db.entities.Rule
 import com.google.common.truth.Truth.assertThat
-import io.mockk.any
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
-import io.mockk.match
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.cancel
