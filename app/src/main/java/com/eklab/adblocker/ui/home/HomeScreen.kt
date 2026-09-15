@@ -57,12 +57,7 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
             ) {
                 notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
             }
-            val consentIntent = VpnControl.prepareIntent(context)
-            if (consentIntent != null) {
-                vpnConsentLauncher.launch(consentIntent)
-            } else {
-                VpnControl.start(context)
-            }
+            VpnControl.startOrRequestConsent(context, vpnConsentLauncher::launch)
         } else {
             VpnControl.stop(context)
         }

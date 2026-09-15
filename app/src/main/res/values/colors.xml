@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="ic_launcher_background">#FFFFFF</color>
+    <color name="widget_background">#1C1B1F</color>
+    <color name="widget_title">#FFFFFF</color>
+    <color name="widget_status">#CAC4D0</color>
 </resources>

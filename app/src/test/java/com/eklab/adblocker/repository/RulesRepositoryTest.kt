@@ -117,6 +117,56 @@ class RulesRepositoryTest {
     }
 
     @Test
+    fun `addAllSkippingDuplicates inserts new host suffixes only`() = runTest {
+        coEvery { ruleDao.getAll() } returns listOf(rule1)
+        val duplicateNoDot = rule1.copy(id = 0, selectorValue = "ads.com")
+        val duplicateCase = rule1.copy(id = 0, selectorValue = ".ADS.COM")
+        val fresh = rule1.copy(id = 0, name = ".vungle.com", selectorValue = ".vungle.com")
+        val emptySuffix = rule1.copy(id = 0, name = "empty", selectorValue = ".")
+
+        val inserted = repository.addAllSkippingDuplicates(
+            listOf(duplicateNoDot, duplicateCase, fresh, emptySuffix, rule2),
+        )
+
+        assertThat(inserted).isEqualTo(2)
+        coVerify {
+            ruleDao.insertAll(
+                match { rules ->
+                    rules.size == 2 &&
+                        rules[0].selectorValue == ".vungle.com" &&
+                        rules[1] == rule2
+                },
+            )
+        }
+    }
+
+    @Test
+    fun `addAllSkippingDuplicates skips insert when every suffix already exists`() = runTest {
+        coEvery { ruleDao.getAll() } returns listOf(rule1)
+
+        val inserted = repository.addAllSkippingDuplicates(
+            listOf(rule1.copy(id = 0, selectorValue = "ADS.com")),
+        )
+
+        assertThat(inserted).isEqualTo(0)
+        coVerify(exactly = 0) { ruleDao.insertAll(any()) }
+    }
+
+    @Test
+    fun `addAllSkippingDuplicates skips duplicate suffixes inside the same batch`() = runTest {
+        coEvery { ruleDao.getAll() } returns emptyList()
+        val first = rule1.copy(id = 0, selectorValue = ".vungle.com")
+        val second = rule1.copy(id = 0, selectorValue = "vungle.com")
+
+        val inserted = repository.addAllSkippingDuplicates(listOf(first, second))
+
+        assertThat(inserted).isEqualTo(1)
+        coVerify {
+            ruleDao.insertAll(match { it.size == 1 && it[0].selectorValue == ".vungle.com" })
+        }
+    }
+
+    @Test
     fun `previewMatchCount counts engine matches over logged connections`() = runTest {
         val logs = listOf(connectionLog(1), connectionLog(2), connectionLog(3))
         coEvery { connectionLogDao.logsInWindow(any(), any()) } returns logs

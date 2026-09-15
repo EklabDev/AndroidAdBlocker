@@ -21,6 +21,9 @@ interface RuleDao {
     @Insert
     suspend fun insert(rule: Rule): Long
 
+    @Insert
+    suspend fun insertAll(rules: List<Rule>): List<Long>
+
     @Update
     suspend fun update(rule: Rule)
 
